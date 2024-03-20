@@ -5,15 +5,15 @@ export const manageUsers = defineStore({
   state: () => {
     return {
       users: [
-        { id: 1, name: "Marek" },
-        { id: 2, name: "Petra" },
-        { id: 3, name: "Karel" },
+        { id: 1, name: "Marek Sommer", age: 25 },
+        { id: 2, name: "Petra Nováková", age: 30 },
+        { id: 3, name: "Karel Dobrovský", age: 35 },
       ],
     };
   },
   actions: {
-    addUsers(id: number, name: string) {
-      this.users.push({ id, name });
+    addUser(id: number, name: string, age: number) {
+      this.users.push({ id, name, age });
     },
   },
   getters: {
