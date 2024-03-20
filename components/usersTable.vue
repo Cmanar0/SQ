@@ -15,8 +15,10 @@ function addUser() {
   }`;
   usersStore.addUser({ id: id, name: name, age: age });
 }
+
+const usedById = usersStore.getUserById(2);
 </script>
 <template>
   <dx-button @click="addUser">Add User</dx-button>
-  <pre>{{ users }}</pre>
+  <pre>{{ usedById }}</pre>
 </template>
