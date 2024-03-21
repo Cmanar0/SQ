@@ -7,8 +7,11 @@
           <hamburger class="ham hover:text-gray-300" @click="toggleMenu" />
         </span>
         <a href="#" class="text-white text-2xl font-semibold uppercase hover:text-gray-300">Logo</a>
-        <div v-if="isMobile">Mobile</div>
-        <div v-else>Desktop</div>
+        <div class="flex">
+          <span class="mx-4"> {{ windowWidth }}</span>
+          <div v-if="isMobile">Mobile</div>
+          <div v-else>Desktop</div>
+        </div>
       </header>
     </div>
     <!-- ------------- Navbar end ------------- -->
