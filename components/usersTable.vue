@@ -39,7 +39,7 @@ const usedById = usersStore.getUserById(2)
         Add User
       </button>
     </div>
-    <div>
+    <div class="overflow-auto">
       <table class="min-w-full table-auto">
         <thead class="bg-gray-200">
           <tr>
@@ -53,7 +53,7 @@ const usedById = usersStore.getUserById(2)
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Age
             </th>
-            <th class="px-1 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
               Actions
             </th>
           </tr>
@@ -64,7 +64,7 @@ const usedById = usersStore.getUserById(2)
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.name }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.email }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.age }}</td>
-            <td class="px-1 py-2 text-right text-sm font-medium">
+            <td class="px-5 py-2 text-right text-sm font-medium">
               <div class="actions">
                 <span class="btn-content">
                   <edit class="icon" />
@@ -123,5 +123,22 @@ h1 {
 .actions span:active {
   background-color: #d9d9d9;
   color: #444;
+}
+.overflow-auto {
+  overflow-x: auto;
+  scrollbar-width: auto;
+}
+
+.overflow-auto::-webkit-scrollbar {
+  height: 8px;
+  background: #f1f1f1;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>
