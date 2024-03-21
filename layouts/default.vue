@@ -44,6 +44,10 @@
         }"
       >
         <NuxtPage />
+        <div class="x">
+          <div class="y"></div>
+          <div class="z"></div>
+        </div>
         {{ mennuOpen }}
         <NuxtPage />
         <NuxtPage />
@@ -106,6 +110,7 @@ onUnmounted(() => {
   height: 80px;
   position: fixed;
   width: 100%;
+  max-width: 100vw;
   top: 0;
   z-index: 1000;
   background-color: #fff;
@@ -116,6 +121,7 @@ onUnmounted(() => {
 main {
   margin-top: 80px;
   width: 100%;
+  overflow-x: hidden;
 }
 .main-margin-mobile-menu-closed {
   margin-left: 0px;
