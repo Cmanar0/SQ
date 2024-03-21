@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen flex-col">
+    <!-- ------------- Navbar start ------------- -->
     <div class="nav-bar">
       <header class="bg-gray-800 text-white p-5">
         <span>
@@ -10,14 +11,20 @@
         <div v-else>Desktop</div>
       </header>
     </div>
+    <!-- ------------- Navbar end ------------- -->
     <div class="flex">
-      <!-- Sidebar -->
+      <!-- ------------- Sidebar start ------------- -->
       <div
-        :class="{ menuClosed: !mennuOpen }"
-        class="menu h-screen-minus-80 space-y-6 py-7 px-2 bg-gray-800 text-white flex flex-col"
+        :class="{
+          menuClosed: !mennuOpen,
+          'menu-mobile-closed': !mennuOpen && isMobile,
+          'menu-mobile-open': mennuOpen && isMobile
+        }"
+        class="menu h-screen-minus-80 space-y-6 py-2 px-2 bg-gray-800 text-white flex flex-col"
       >
         <nav>
           <a
+            v-if="(mennuOpen && isMobile) || !isMobile"
             href="/"
             class="block py-2.5 px-4 rounded transition duration-200 hover:bg-gray-700 hover:text-white"
           >
@@ -26,14 +33,23 @@
           </a>
         </nav>
       </div>
-      <!-- Main content -->
-      <main class="p-5">
+      <!-- ------------- Sidebar end ------------- -->
+      <!-- ------------- Main content start ------------- -->
+      <main
+        class="p-5"
+        :class="{
+          'main-margin-desktop-menu-closed': !mennuOpen && !isMobile,
+          'main-margin-desktop-menu-open': mennuOpen && !isMobile,
+          'main-margin-mobile-menu-closed': !mennuOpen && isMobile
+        }"
+      >
         <NuxtPage />
         {{ mennuOpen }}
         <NuxtPage />
         <NuxtPage />
         <NuxtPage />
       </main>
+      <!-- ------------- Main content end ------------- -->
     </div>
   </div>
 </template>
@@ -53,7 +69,6 @@ const toggleMenu = () => {
   mennuOpen.value = !mennuOpen.value
 }
 // ------------- toggle menu on mobile end -------------
-
 // ------------- update window width start ------------- :
 const updateWidth = () => {
   windowWidth.value = window.innerWidth
@@ -63,10 +78,9 @@ const isMobile = computed(() => {
   return windowWidth.value < 768
 })
 // ------------- update window width end -------------
-
 onMounted(() => {
   window.addEventListener('resize', updateWidth)
-  updateWidth() // Ensure correct initial value
+  updateWidth()
 })
 
 onUnmounted(() => {
@@ -75,6 +89,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* -------------- Navbar start -------------- */
 .nav-bar header {
   display: flex;
   justify-content: space-between;
@@ -93,18 +108,45 @@ onUnmounted(() => {
   width: 100%;
   top: 0;
   z-index: 1000;
+  background-color: #fff;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 }
-
+/* -------------- Navbar end -------------- */
+/* -------------- Main content start -------------- */
 main {
   margin-top: 80px;
   width: 100%;
 }
+.main-margin-mobile-menu-closed {
+  margin-left: 0px;
+  transition: margin-left 0.5s;
+}
+.main-margin-desktop-menu-closed {
+  margin-left: 70px;
+  transition: margin-left 0.5s;
+}
+.main-margin-desktop-menu-open {
+  margin-left: 260px;
+  transition: margin-left 0.5s;
+}
+/* -------------- Main content end -------------- */
+/* -------------- Sidebar start -------------- */
 .menu {
-  width: 264px;
+  width: 260px;
   transition: width 0.5s;
 }
 .menuClosed {
   width: 70px;
+  transition: width 0.5s;
+}
+.menu-mobile-closed {
+  width: 0;
+  padding: 0;
+  transition: width 0.5s;
+}
+.menu-mobile-open {
+  width: 100%;
+  padding: 15px;
   transition: width 0.5s;
 }
 .menu a {
@@ -132,4 +174,5 @@ main {
   transition: opacity 0.5s;
   opacity: 0;
 }
+/* -------------- Sidebar end -------------- */
 </style>
