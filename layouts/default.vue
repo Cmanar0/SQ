@@ -44,14 +44,6 @@
         }"
       >
         <NuxtPage />
-        <div class="x">
-          <div class="y"></div>
-          <div class="z"></div>
-        </div>
-        {{ mennuOpen }}
-        <NuxtPage />
-        <NuxtPage />
-        <NuxtPage />
       </main>
       <!-- ------------- Main content end ------------- -->
     </div>

@@ -14,9 +14,4 @@ export default {
 }
 </script>
 
-<style>
-.icon {
-  width: 1em;
-  height: 1em;
-}
-</style>
+<style></style>
