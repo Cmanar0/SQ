@@ -3,36 +3,40 @@ import userPlus from '../assets/svg/user-plus.vue'
 import userMinus from '../assets/svg/user-minus.vue'
 import edit from '../assets/svg/edit.vue'
 import close from '../assets/svg/close.vue'
-import { ref, watch } from 'vue'
+import { computed, ref, reactive } from 'vue'
 
 import { storeToRefs } from 'pinia'
-import { manageUsers } from '@/stores/store'
+import { manageUsers } from '../stores/store.js'
 
 const usersStore = manageUsers()
 const { users } = storeToRefs(usersStore)
 
-const userName = ref('')
-
-const userEmail = ref('')
-const isValidEmail = ref(true)
-
-const userPassword = ref('')
-
-const userPasswordConfirmation = ref('')
+const userInfo = reactive({
+  username: '',
+  email: '',
+  password: '',
+  passwordConfirmation: ''
+})
+const isValidEmail = computed(() => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailPattern.test(userInfo.email)
+})
+const isPasswordMatch = computed(() => {
+  return userInfo.password === userInfo.passwordConfirmation
+})
+const isPassworGoodEnough = computed(() => {
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  return passwordPattern.test(userInfo.password)
+})
 
 const isModalOpen = ref(false) // Controls the modal visibility
 
-watch(userEmail, newValue => {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  isValidEmail.value = emailPattern.test(newValue)
-})
-
 function addUser() {
-  usersStore.addUser(userName.value, userEmail.value)
-  userName.value = ''
-  userEmail.value = ''
-  userPassword.value = ''
-  userPasswordConfirmation.value = ''
+  // usersStore.addUser(userName.value, userEmail.value)
+  // userName.value = ''
+  // userEmail.value = ''
+  // userPassword.value = ''
+  // userPasswordConfirmation.value = ''
   isModalOpen.value = false
 }
 const usedById = usersStore.getUserById(2)
@@ -122,39 +126,54 @@ function deleteUser(id: number) {
               v-model="userName"
               type="text"
               placeholder="Name"
-              class="p-2 border border-gray-300 rounded w-full"
+              class="p-2 border border-gray-200 rounded w-full"
             />
-            <input
-              v-model="userEmail"
-              type="text"
-              placeholder="Email"
-              class="p-2 border border-gray-300 rounded w-full"
-            />
-            <div class="flex flex-col gap-2">
+            <div>
+              <label for="email" class="sr-only">Email</label>
               <input
-                v-model="userEmail"
+                v-model="userInfo.email"
                 type="email"
+                name="email"
                 placeholder="Email"
-                :class="`block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none ${
-                  isValidEmail.value
-                    ? 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
-                    : 'border-red-500 focus:ring-red-500 focus:border-red-500'
-                }`"
+                class="p-2 border border-gray-200 rounded w-full"
+                :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
+                required
               />
-              <p v-if="!isValidEmail.value" class="text-sm text-red-500">Please enter a valid email.</p>
+              <p v-if="userInfo.email && !isValidEmail" class="mt-1 text-sm text-red-500">
+                Please enter a valid email address.
+              </p>
             </div>
-            <input
-              v-model="userPassword"
-              type="password"
-              placeholder="Password"
-              class="p-2 border border-gray-300 rounded w-full"
-            />
-            <input
-              v-model="userPasswordConfirmation"
-              type="password"
-              placeholder="Confirm Password"
-              class="p-2 border border-gray-300 rounded w-full"
-            />
+            <div>
+              <label for="email" class="sr-only">Password</label>
+              <input
+                v-model="userInfo.password"
+                type="password"
+                name="password"
+                placeholder="Password"
+                class="p-2 border border-gray-200 rounded w-full"
+                :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
+                required
+              />
+              <p v-if="userInfo.password && !isPassworGoodEnough" class="mt-1 text-sm text-red-500">
+                Password must be at least 8 characters long. Must contain at least one uppercase letter, one
+                lowercase letter, one number and one special character.
+              </p>
+            </div>
+            <div>
+              <label for="email" class="sr-only">Password</label>
+              <input
+                v-model="userInfo.passwordConfirmation"
+                type="password"
+                name="passwordConfirmation"
+                placeholder="Confirm Password"
+                class="p-2 border border-gray-200 rounded w-full"
+                :class="{ 'border-red-500': userInfo.passwordConfirmation && !isPasswordMatch }"
+                required
+              />
+              <p v-if="userInfo.passwordConfirmation && !isPasswordMatch" class="mt-1 text-sm text-red-500">
+                Password does not match.
+              </p>
+            </div>
           </div>
 
           <div class="modal-footer flex justify-end mt-4">
