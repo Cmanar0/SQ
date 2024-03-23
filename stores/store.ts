@@ -5,15 +5,19 @@ export const manageUsers = defineStore({
   state: () => {
     return {
       users: [
-        { id: 1, name: 'Marek Sommer', email: 'marek.test@gmail.com', age: 25 },
-        { id: 2, name: 'Petra Nováková', email: 'petra.test@email.cz', age: 30 },
-        { id: 3, name: 'Karel Dobrovský', email: 'karel.test@centrum.cz', age: 35 }
+        { id: 1, username: 'Marek Sommer', email: 'marek.test@gmail.com', password: 25 },
+        { id: 2, username: 'Petra Nováková', email: 'petra.test@email.cz', password: 30 },
+        { id: 3, username: 'Karel Dobrovský', email: 'karel.test@centrum.cz', password: 35 }
       ]
     }
   },
   actions: {
-    addUser(id: number, name: string, email: string, age: number) {
-      this.users.push({ id, name, email, age })
+    addUser(id: number, username: string, email: string, password: any) {
+      this.users.push({ id, username, email, password })
+    },
+    deleteUser(id: number) {
+      const index = this.users.findIndex(user => user.id === id)
+      this.users.splice(index, 1)
     }
   },
   getters: {

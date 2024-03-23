@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
+    "sourceMap": true,
+    "strict": true,
     "paths": {
-      "@/*": ["src/*"]
+      "~/*": ["./*"],
+      "@/*": ["./*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", ".nuxt", "dist", "./.playground/.nuxt/tsconfig.json"]
 }

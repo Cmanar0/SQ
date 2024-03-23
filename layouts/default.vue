@@ -159,6 +159,13 @@ main {
 
 .ham {
   cursor: pointer;
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: #fff;
+  margin-left: 2px;
+}
+.ham:hover {
+  fill: #ccc;
 }
 .icon {
   min-width: 1.1em;

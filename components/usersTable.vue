@@ -3,20 +3,22 @@ import userPlus from '../assets/svg/user-plus.vue'
 import userMinus from '../assets/svg/user-minus.vue'
 import edit from '../assets/svg/edit.vue'
 import close from '../assets/svg/close.vue'
-import { computed, ref, reactive } from 'vue'
-
-import { storeToRefs } from 'pinia'
 import { manageUsers } from '../stores/store.js'
-
-const usersStore = manageUsers()
-const { users } = storeToRefs(usersStore)
-
+import { computed, ref, reactive } from 'vue'
+import { usersComposable } from '../composables/manageUsers/usersComposable'
+const { users, addUserToStoreCOMP, editUserInStoreCOMP, deleteUserFromStoreCOMP } = usersComposable()
+console.log('users :>> ', users)
+// ---------------------- REACTIVE START ------------------------
 const userInfo = reactive({
+  id: 0,
   username: '',
   email: '',
   password: '',
   passwordConfirmation: ''
 })
+const isModalOpen = ref(false)
+// ---------------------- REACTIVE END --------------------------
+// -------------------- COMPUTED START-----------------------
 const isValidEmail = computed(() => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return emailPattern.test(userInfo.email)
@@ -25,42 +27,43 @@ const isPasswordMatch = computed(() => {
   return userInfo.password === userInfo.passwordConfirmation
 })
 const isPassworGoodEnough = computed(() => {
-  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  // const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+  const passwordPattern = /^.{6,}$/
   return passwordPattern.test(userInfo.password)
 })
-
-const isModalOpen = ref(false) // Controls the modal visibility
+// -------------------- COMPUTED END-------------------------
+// -------------------- FUNCTIONS START ---------------------
 
 function addUser() {
-  // usersStore.addUser(userName.value, userEmail.value)
-  // userName.value = ''
-  // userEmail.value = ''
-  // userPassword.value = ''
-  // userPasswordConfirmation.value = ''
+  // userInfo.id = usersStore.users.length + 1
+  addUserToStoreCOMP({ id: userInfo.id, username: userInfo.username, email: userInfo.email, password: userInfo.password })
+  resetUserInfo()
   isModalOpen.value = false
 }
-const usedById = usersStore.getUserById(2)
-
+function resetUserInfo() {
+  userInfo.username = ''
+  userInfo.email = ''
+  userInfo.password = ''
+  userInfo.passwordConfirmation = ''
+}
 function editUser(id: number) {
-  const user = usersStore.getUserById(id)
-  console.log('user :>> ', user)
+  editUserInStoreCOMP(id)
+  // const user = usersStore.getUserById(id)
+  // console.log('user :>> ', user)
 }
 
 function deleteUser(id: number) {
-  const user = usersStore.getUserById(id)
-  console.log('user :>> ', user)
+  deleteUserFromStoreCOMP(id)
+  // const user = usersStore.deleteUser(id)
+  // console.log('user :>> ', user)
 }
+// -------------------- FUNCTIONS END ---------------------
 </script>
 <template>
   <div>
     <div class="main-header">
       <h1>List of users</h1>
-      <button
-        @click="isModalOpen = true"
-        class="btn-content mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        <user-plus class="icon" /> Add User
-      </button>
+      <button @click="isModalOpen = true" class="btn-content mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"><user-plus class="icon" /> Add User</button>
     </div>
 
     <div class="overflow-auto">
@@ -68,26 +71,16 @@ function deleteUser(id: number) {
         <thead class="bg-gray-200">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Name
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Email
-            </th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Age
-            </th>
-            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
-            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="user in users" :key="user.id" class="bg-white border-b hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ user.id }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.name }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.username }}</td>
             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.email }}</td>
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.age }}</td>
             <td class="px-5 py-2 text-right text-sm font-medium">
               <div class="actions">
                 <span class="btn-content" @click="editUser(user.id)">
@@ -107,11 +100,7 @@ function deleteUser(id: number) {
     <!-- <pre class="mt-4">{{ usedById }}</pre> -->
     <!-- -------------- Modal START -------------- -->
     <div>
-      <div
-        v-if="isModalOpen"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
-        @click.self="isModalOpen = false"
-      >
+      <div v-if="isModalOpen" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" @click.self="isModalOpen = false">
         <!-- Modal content, now centered -->
         <div class="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md m-auto" @click.stop>
           <div class="modal-header flex justify-between items-start mb-4">
@@ -122,12 +111,7 @@ function deleteUser(id: number) {
             </button>
           </div>
           <div class="modal-body flex flex-col gap-4">
-            <input
-              v-model="userName"
-              type="text"
-              placeholder="Name"
-              class="p-2 border border-gray-200 rounded w-full"
-            />
+            <input v-model="userInfo.username" type="text" placeholder="Name" class="p-2 border border-gray-200 rounded w-full" />
             <div>
               <label for="email" class="sr-only">Email</label>
               <input
@@ -139,9 +123,7 @@ function deleteUser(id: number) {
                 :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
                 required
               />
-              <p v-if="userInfo.email && !isValidEmail" class="mt-1 text-sm text-red-500">
-                Please enter a valid email address.
-              </p>
+              <p v-if="userInfo.email && !isValidEmail" class="mt-1 text-sm text-red-500">Please enter a valid email address.</p>
             </div>
             <div>
               <label for="email" class="sr-only">Password</label>
@@ -155,8 +137,9 @@ function deleteUser(id: number) {
                 required
               />
               <p v-if="userInfo.password && !isPassworGoodEnough" class="mt-1 text-sm text-red-500">
-                Password must be at least 8 characters long. Must contain at least one uppercase letter, one
-                lowercase letter, one number and one special character.
+                Password must be at least 6 characters long.
+                <!-- Must contain at least one uppercase letter, one
+                lowercase letter, one number and one special character. -->
               </p>
             </div>
             <div>
@@ -170,19 +153,12 @@ function deleteUser(id: number) {
                 :class="{ 'border-red-500': userInfo.passwordConfirmation && !isPasswordMatch }"
                 required
               />
-              <p v-if="userInfo.passwordConfirmation && !isPasswordMatch" class="mt-1 text-sm text-red-500">
-                Password does not match.
-              </p>
+              <p v-if="userInfo.passwordConfirmation && !isPasswordMatch" class="mt-1 text-sm text-red-500">Password does not match.</p>
             </div>
           </div>
 
           <div class="modal-footer flex justify-end mt-4">
-            <button
-              @click="addUser"
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Save
-            </button>
+            <button @click="addUser" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Save</button>
           </div>
         </div>
       </div>
