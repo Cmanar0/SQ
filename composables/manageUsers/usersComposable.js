@@ -2,6 +2,7 @@ import { manageUsers } from '@/stores/store'
 
 export function usersComposable() {
   const usersStore = manageUsers()
+  const users = usersStore.users
   const addUserToStoreCOMP = user => {
     usersStore.addUser(user)
   }
@@ -15,7 +16,7 @@ export function usersComposable() {
   }
 
   return {
-    users: usersStore.users,
+    users,
     addUserToStoreCOMP,
     editUserInStoreCOMP,
     deleteUserFromStoreCOMP
