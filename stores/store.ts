@@ -1,18 +1,19 @@
 import { defineStore } from 'pinia'
+import { User } from '@/types/user' // Adjust the import path as needed
 
 export const manageUsers = defineStore({
   id: 'users',
   state: () => {
     return {
       users: [
-        { id: 1, username: 'Marek Sommer', email: 'marek.test@gmail.com', password: 25 },
-        { id: 2, username: 'Petra Nováková', email: 'petra.test@email.cz', password: 30 },
-        { id: 3, username: 'Karel Dobrovský', email: 'karel.test@centrum.cz', password: 35 }
+        { id: 1, username: 'Marek Sommer', email: 'marek.test@gmail.com', password: 'qwefqwef' },
+        { id: 2, username: 'Petra Nováková', email: 'petra.test@email.cz', password: 'asdffasdf' },
+        { id: 3, username: 'Karel Dobrovský', email: 'karel.test@centrum.cz', password: 'asdfasdf' }
       ]
     }
   },
   actions: {
-    addUser(user: { id: number; username: string; email: string; password: number }) {
+    addUser(user: User) {
       this.users.push(user)
     },
     deleteUser(id: number) {
