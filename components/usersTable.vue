@@ -10,13 +10,14 @@ const { users, addUserToStoreCOMP, editUserInStoreCOMP, deleteUserFromStoreCOMP 
 console.log('users :>> ', users)
 // ---------------------- REACTIVE START ------------------------
 const userInfo = reactive({
-  id: 0,
+  id: users.length + 1,
   username: '',
   email: '',
   password: '',
   passwordConfirmation: ''
 })
 const isModalOpen = ref(false)
+const rerender = ref(0)
 // ---------------------- REACTIVE END --------------------------
 // -------------------- COMPUTED START-----------------------
 const isValidEmail = computed(() => {
@@ -36,9 +37,13 @@ const isPassworGoodEnough = computed(() => {
 
 function addUser() {
   // userInfo.id = usersStore.users.length + 1
-  addUserToStoreCOMP({ id: userInfo.id, username: userInfo.username, email: userInfo.email, password: userInfo.password })
+  // const userNew = { id: userInfo.id, username: userInfo.username, email: userInfo.email, password: userInfo.password }
+  addUserToStoreCOMP({ ...userInfo })
   resetUserInfo()
   isModalOpen.value = false
+  console.log('rerender :>> ', rerender)
+  rerender.value++
+  console.log('rerender :>> ', rerender)
 }
 function resetUserInfo() {
   userInfo.username = ''
@@ -47,7 +52,8 @@ function resetUserInfo() {
   userInfo.passwordConfirmation = ''
 }
 function editUser(id: number) {
-  editUserInStoreCOMP(id)
+  console.log('users :>> ', users)
+  // editUserInStoreCOMP(id)
   // const user = usersStore.getUserById(id)
   // console.log('user :>> ', user)
 }
@@ -67,7 +73,7 @@ function deleteUser(id: number) {
     </div>
 
     <div class="overflow-auto">
-      <table class="min-w-full table-auto">
+      <table :key="rerender" class="min-w-full table-auto">
         <thead class="bg-gray-200">
           <tr>
             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>

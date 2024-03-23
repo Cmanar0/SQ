@@ -3,9 +3,8 @@ import { manageUsers } from '@/stores/store'
 
 export function usersComposable() {
   const usersStore = manageUsers()
-  const { users } = storeToRefs(usersStore)
-
   const addUserToStoreCOMP = user => {
+    console.log('user :>> ', user)
     usersStore.addUser(user)
   }
 
@@ -17,5 +16,10 @@ export function usersComposable() {
     usersStore.deleteUser(id)
   }
 
-  return { users, addUserToStoreCOMP, editUserInStoreCOMP, deleteUserFromStoreCOMP }
+  return {
+    users: usersStore.users,
+    addUserToStoreCOMP,
+    editUserInStoreCOMP,
+    deleteUserFromStoreCOMP
+  }
 }
