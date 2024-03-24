@@ -28,15 +28,15 @@ export const useBaseModalStore = defineStore({
       rightBtnText,
       rightBtnAction
     }: {
-      title: string
-      content: string
+      title?: string
+      content?: string
       leftBtnText: string
       leftBtnAction: any
       rightBtnText: string
       rightBtnAction: any
     }) {
-      this.modalSettings.title = title
-      this.modalSettings.content = content
+      this.modalSettings.title = title ?? this.modalSettings.title
+      this.modalSettings.content = content ?? this.modalSettings.content
       this.modalSettings.leftBtn.text = leftBtnText
       this.modalSettings.leftBtn.action = leftBtnAction
       this.modalSettings.rightBtn.text = rightBtnText

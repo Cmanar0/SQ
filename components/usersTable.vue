@@ -21,15 +21,14 @@ import BaseModal from './reusable/BaseModal.vue'
 
 // ---------------------- REACTIVE START ------------------------
 const userInfo = reactive({
-  id: users.length + 1,
+  id: Math.floor(Math.random() * 901) + 100,
   username: '',
   email: '',
   password: '',
   passwordConfirmation: ''
 })
 const isModalOpen = ref(false)
-const rerender = ref(0)
-const modalRef = ref()
+const hasModalCustomTemplate = ref(false)
 
 // ---------------------- REACTIVE END --------------------------
 // -------------------- COMPUTED START-----------------------
@@ -48,12 +47,27 @@ const isPassworGoodEnough = computed(() => {
 // -------------------- COMPUTED END-------------------------
 // -------------------- FUNCTIONS START ---------------------
 
+function addUserModalForm() {
+  hasModalCustomTemplate.value = true
+  baseModalStore.setModalSettings({
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Save',
+    rightBtnAction: () => {
+      addUser()
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
+}
 function addUser() {
   addUserToStoreCOMP({ ...userInfo })
   resetUserInfo()
-  isModalOpen.value = false
 }
 function resetUserInfo() {
+  userInfo.id = Math.floor(Math.random() * 901) + 100
   userInfo.username = ''
   userInfo.email = ''
   userInfo.password = ''
@@ -63,6 +77,7 @@ function editUser(id: number) {
   console.log('users :>> ', users)
 }
 function deleteUser(id: number) {
+  hasModalCustomTemplate.value = false
   baseModalStore.setModalSettings({
     title: 'Delete User',
     content: 'Are you sure you want to delete this user?',
@@ -82,11 +97,86 @@ function deleteUser(id: number) {
 </script>
 <template>
   <div>
-    <BaseModal ref="modalRef"></BaseModal>
+    <BaseModal v-if="!hasModalCustomTemplate" />
+    <BaseModal v-else>
+      <template #header>
+        <h3>Add User</h3>
+      </template>
+
+      <template #default>
+        <div class="modal-body flex flex-col gap-4">
+          <input
+            v-model="userInfo.username"
+            type="text"
+            placeholder="Name"
+            class="p-2 border border-gray-200 rounded w-full"
+          />
+          <div>
+            <label for="email" class="sr-only">Email</label>
+            <input
+              v-model="userInfo.email"
+              type="email"
+              name="email"
+              placeholder="Email"
+              class="p-2 border border-gray-200 rounded w-full"
+              :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
+              required
+            />
+            <p
+              v-if="userInfo.email && !isValidEmail"
+              class="mt-1 text-sm text-red-500"
+            >
+              Please enter a valid email address.
+            </p>
+          </div>
+          <div>
+            <label for="email" class="sr-only">Password</label>
+            <input
+              v-model="userInfo.password"
+              type="password"
+              name="password"
+              placeholder="Password"
+              class="p-2 border border-gray-200 rounded w-full"
+              :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
+              required
+            />
+            <p
+              v-if="userInfo.password && !isPassworGoodEnough"
+              class="mt-1 text-sm text-red-500"
+            >
+              Password must be at least 6 characters long.
+            </p>
+          </div>
+          <div>
+            <label for="email" class="sr-only">Password</label>
+            <input
+              v-model="userInfo.passwordConfirmation"
+              type="password"
+              name="passwordConfirmation"
+              placeholder="Confirm Password"
+              class="p-2 border border-gray-200 rounded w-full"
+              :class="{
+                'border-red-500':
+                  userInfo.passwordConfirmation && !isPasswordMatch
+              }"
+              required
+            />
+            <p
+              v-if="userInfo.passwordConfirmation && !isPasswordMatch"
+              class="mt-1 text-sm text-red-500"
+            >
+              Password does not match.
+            </p>
+          </div>
+        </div>
+      </template>
+
+      <template #footer></template>
+    </BaseModal>
     <div class="main-header">
       <h1>List of users</h1>
       <button
-        @click="isModalOpen = true"
+        @click="addUserModalForm"
         class="btn-content mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
       >
         <user-plus class="icon" /> Add User
@@ -94,7 +184,7 @@ function deleteUser(id: number) {
     </div>
 
     <div class="overflow-auto">
-      <table :key="rerender" class="min-w-full table-auto">
+      <table class="min-w-full table-auto">
         <thead class="bg-gray-200">
           <tr>
             <th
@@ -152,106 +242,6 @@ function deleteUser(id: number) {
         </tbody>
       </table>
     </div>
-    <!-- -------------- Modal START -------------- -->
-    <div>
-      <div
-        v-if="isModalOpen"
-        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
-        @click.self="isModalOpen = false"
-      >
-        <!-- Modal content, now centered -->
-        <div
-          class="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md m-auto"
-          @click.stop
-        >
-          <div class="modal-header flex justify-between items-start mb-4">
-            <h2 class="text-xl font-semibold">Add New User</h2>
-            <button
-              @click="isModalOpen = false"
-              class="text-gray-400 hover:text-gray-600"
-            >
-              <span class="sr-only">Close</span>
-              <close class="icon-close" />
-            </button>
-          </div>
-          <div class="modal-body flex flex-col gap-4">
-            <input
-              v-model="userInfo.username"
-              type="text"
-              placeholder="Name"
-              class="p-2 border border-gray-200 rounded w-full"
-            />
-            <div>
-              <label for="email" class="sr-only">Email</label>
-              <input
-                v-model="userInfo.email"
-                type="email"
-                name="email"
-                placeholder="Email"
-                class="p-2 border border-gray-200 rounded w-full"
-                :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
-                required
-              />
-              <p
-                v-if="userInfo.email && !isValidEmail"
-                class="mt-1 text-sm text-red-500"
-              >
-                Please enter a valid email address.
-              </p>
-            </div>
-            <div>
-              <label for="email" class="sr-only">Password</label>
-              <input
-                v-model="userInfo.password"
-                type="password"
-                name="password"
-                placeholder="Password"
-                class="p-2 border border-gray-200 rounded w-full"
-                :class="{ 'border-red-500': userInfo.email && !isValidEmail }"
-                required
-              />
-              <p
-                v-if="userInfo.password && !isPassworGoodEnough"
-                class="mt-1 text-sm text-red-500"
-              >
-                Password must be at least 6 characters long.
-              </p>
-            </div>
-            <div>
-              <label for="email" class="sr-only">Password</label>
-              <input
-                v-model="userInfo.passwordConfirmation"
-                type="password"
-                name="passwordConfirmation"
-                placeholder="Confirm Password"
-                class="p-2 border border-gray-200 rounded w-full"
-                :class="{
-                  'border-red-500':
-                    userInfo.passwordConfirmation && !isPasswordMatch
-                }"
-                required
-              />
-              <p
-                v-if="userInfo.passwordConfirmation && !isPasswordMatch"
-                class="mt-1 text-sm text-red-500"
-              >
-                Password does not match.
-              </p>
-            </div>
-          </div>
-
-          <div class="modal-footer flex justify-end mt-4">
-            <button
-              @click="addUser"
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- -------------- Modal END -------------- -->
   </div>
 </template>
 
