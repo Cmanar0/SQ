@@ -1,11 +1,6 @@
 <script lang="ts" async setup>
-import userPlus from '../assets/svg/user-plus.vue'
-import userMinus from '../assets/svg/user-minus.vue'
-import edit from '../assets/svg/edit.vue'
-import close from '../assets/svg/close.vue'
-import BaseModal from './reusable/BaseModal.vue'
-
 import { computed, ref, reactive } from 'vue'
+// ---------------------- Composables ----------------------
 import { usersComposable } from '../composables/manageUsers/usersComposable'
 const {
   users,
@@ -13,6 +8,17 @@ const {
   editUserInStoreCOMP,
   deleteUserFromStoreCOMP
 } = usersComposable()
+// ---------------------- Stores ----------------------
+import { useBaseModalStore } from '@/stores/baseModalStore'
+const baseModalStore = useBaseModalStore()
+
+// ---------------------- Components ----------------------
+import userPlus from '../assets/svg/user-plus.vue'
+import userMinus from '../assets/svg/user-minus.vue'
+import edit from '../assets/svg/edit.vue'
+import close from '../assets/svg/close.vue'
+import BaseModal from './reusable/BaseModal.vue'
+
 // ---------------------- REACTIVE START ------------------------
 const userInfo = reactive({
   id: users.length + 1,
@@ -67,9 +73,6 @@ function addUser() {
   addUserToStoreCOMP({ ...userInfo })
   resetUserInfo()
   isModalOpen.value = false
-  console.log('rerender :>> ', rerender)
-  rerender.value++
-  console.log('rerender :>> ', rerender)
 }
 function resetUserInfo() {
   userInfo.username = ''
@@ -81,39 +84,21 @@ function editUser(id: number) {
   console.log('users :>> ', users)
 }
 function deleteUser(id: number) {
-  const params = {
+  baseModalStore.setModalSettings({
     title: 'Delete User',
     content: 'Are you sure you want to delete this user?',
-    leftBtn: { text: 'Cancel', action: () => {} },
-    rightBtn: { text: 'Delete', action: () => deleteUserFromStoreCOMP(id) }
-  }
-  setModal(params)
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Confirm',
+    rightBtnAction: () => {
+      deleteUserFromStoreCOMP(id)
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
 }
-// ! -------- Modal Start --------
-function setModal(params: {
-  title: string
-  content: string
-  leftBtn: { text: string; action: () => void }
-  rightBtn: { text: string; action: () => void }
-}) {
-  modalSettings.title = params.title
-  modalSettings.content = params.content
-  modalSettings.leftBtn.text = params.leftBtn.text
-  modalSettings.leftBtn.action = () => {
-    params.leftBtn.action()
-    modalRef.value.toggleVisibility()
-  }
-  modalSettings.rightBtn.text = params.rightBtn.text
-  modalSettings.rightBtn.action = () => {
-    params.rightBtn.action()
-    modalRef.value.toggleVisibility()
-  }
-  openModal()
-}
-function openModal() {
-  modalRef.value.setModalSettings(modalSettings)
-}
-// ! -------- Modal End --------
 // -------------------- FUNCTIONS END ---------------------
 </script>
 <template>

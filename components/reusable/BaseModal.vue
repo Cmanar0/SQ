@@ -1,23 +1,20 @@
 <template>
   <div>
     <div
-      v-if="isVisible"
+      v-if="isModalOpen"
       class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center"
-      @click.self="isVisible = false"
+      @click.self="closeModal"
     >
-      <!-- Modal content, now centered -->
+      <!-- Modal content -->
       <div
         class="relative bg-white rounded-lg shadow-lg p-6 w-full max-w-md m-auto"
         @click.stop
       >
         <div class="modal-header flex justify-between items-start mb-4">
           <h2 class="text-xl font-semibold">{{ modalSettings.title }}</h2>
-          <button
-            @click="isVisible = false"
-            class="text-gray-400 hover:text-gray-600"
-          >
+          <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
             <span class="sr-only">Close</span>
-            <close class="icon-close" />
+            <CloseIcon />
           </button>
         </div>
         <div class="modal-body">{{ modalSettings.content }}</div>
@@ -39,43 +36,18 @@
     </div>
   </div>
 </template>
-<!-- <div class="modal">
-  <div class="modal-content">
-    <span class="close" @click="toggleVisibility">X</span>
-    <h3>{{ modalSettings.title }}</h3>
-    <p>{{ modalSettings.content }}</p>
-  </div>
-</div>
-<div v-if="isVisible">
-  {{ isVisible }}
-</div> -->
 
 <script setup lang="ts">
-import close from '../../assets/svg/close.vue'
-import { defineExpose, ref } from 'vue'
-const isVisible = ref(false)
-// initiate modal settings:
-const modalSettings = reactive({
-  title: 'Title',
-  content: 'This is the content of the modal',
-  leftBtn: {
-    text: 'Cancel',
-    action: () => {}
-  },
-  rightBtn: {
-    text: 'Save',
-    action: () => {}
-  }
-})
-function setModalSettings(modalSettingsArg: object) {
-  Object.assign(modalSettings, modalSettingsArg)
-  toggleVisibility()
-}
-function toggleVisibility() {
-  isVisible.value = !isVisible.value
-}
+import CloseIcon from '../../assets/svg/close.vue'
+import { useBaseModalStore } from '@/stores/baseModalStore'
 
-defineExpose({ setModalSettings, toggleVisibility })
+const baseModal = useBaseModalStore()
+
+// Access store state
+const { modalSettings, isModalOpen } = storeToRefs(baseModal)
+
+// Access store actions
+const { closeModal } = baseModal
 </script>
 
 <style></style>
