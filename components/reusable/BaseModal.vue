@@ -12,10 +12,19 @@
       >
         <!-- Modal header slot -->
         <div class="modal-header flex justify-between items-start mb-4">
-          <slot name="header">
-            <!-- Fallback content -->
-            <h2 class="text-xl font-semibold">{{ modalSettings.title }}</h2>
-          </slot>
+          <div class="flex-column">
+            <slot name="header">
+              <!-- Fallback content -->
+              <h2 class="text-xl font-semibold">{{ modalSettings.title }}</h2>
+            </slot>
+            <div class="mt-5">
+              <slot name="text">
+                <!-- Fallback content -->
+                <p class="text-gray-500">{{ modalSettings.content }}</p>
+              </slot>
+            </div>
+          </div>
+          <!-- Fallback content -->
           <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
             <span class="sr-only">Close</span>
             <CloseIcon />

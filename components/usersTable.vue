@@ -12,6 +12,8 @@ const {
 import { useBaseModalStore } from '@/stores/baseModalStore'
 const baseModalStore = useBaseModalStore()
 
+import { manageUsers } from '../stores/store'
+const usersStore = manageUsers()
 // ---------------------- Components ----------------------
 import userPlus from '../assets/svg/user-plus.vue'
 import userMinus from '../assets/svg/user-minus.vue'
@@ -43,13 +45,13 @@ const isPassworGoodEnough = computed(() => {
   const passwordPattern = /^.{6,}$/
   return passwordPattern.test(userInfo.password)
 })
-
 // -------------------- COMPUTED END-------------------------
 // -------------------- FUNCTIONS START ---------------------
-
 function addUserModalForm() {
   hasModalCustomTemplate.value = true
   baseModalStore.setModalSettings({
+    title: 'Add User',
+    content: '',
     leftBtnText: 'Cancel',
     leftBtnAction: () => {
       baseModalStore.closeModal()
@@ -66,6 +68,10 @@ function addUser() {
   addUserToStoreCOMP({ ...userInfo })
   resetUserInfo()
 }
+function editUser(id: number) {
+  editUserInStoreCOMP(id, { ...userInfo })
+  resetUserInfo()
+}
 function resetUserInfo() {
   userInfo.id = Math.floor(Math.random() * 901) + 100
   userInfo.username = ''
@@ -73,8 +79,25 @@ function resetUserInfo() {
   userInfo.password = ''
   userInfo.passwordConfirmation = ''
 }
-function editUser(id: number) {
-  console.log('users :>> ', users)
+function editUserModalForm(id: number) {
+  const user = usersStore.getUserById(id)
+  Object.assign(userInfo, user)
+  userInfo.passwordConfirmation = userInfo.password
+  hasModalCustomTemplate.value = true
+  baseModalStore.setModalSettings({
+    title: 'Edit User',
+    content: 'Are you sure you want to edit this user?',
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Save',
+    rightBtnAction: () => {
+      editUser(id)
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
 }
 function deleteUser(id: number) {
   hasModalCustomTemplate.value = false
@@ -100,9 +123,11 @@ function deleteUser(id: number) {
     <BaseModal v-if="!hasModalCustomTemplate" />
     <BaseModal v-else>
       <template #header>
-        <h3>Add User</h3>
+        <h2>{{ baseModalStore.getModalSettings.title }}</h2>
       </template>
-
+      <template #text>
+        <p>{{ baseModalStore.getModalSettings.content }}</p>
+      </template>
       <template #default>
         <div class="modal-body flex flex-col gap-4">
           <input
@@ -228,7 +253,7 @@ function deleteUser(id: number) {
             </td>
             <td class="px-5 py-2 text-right text-sm font-medium">
               <div class="actions">
-                <span class="btn-content" @click="editUser(user.id)">
+                <span class="btn-content" @click="editUserModalForm(user.id)">
                   <edit class="icon" />
                   Edit
                 </span>

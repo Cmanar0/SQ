@@ -7,8 +7,8 @@ export function usersComposable() {
     usersStore.addUser(user)
   }
 
-  const editUserInStoreCOMP = (id, user) => {
-    usersStore.editUser(id, user)
+  const editUserInStoreCOMP = (id, updates) => {
+    usersStore.editUser(id, updates)
   }
 
   const deleteUserFromStoreCOMP = id => {
