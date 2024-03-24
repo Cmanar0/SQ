@@ -31,24 +31,6 @@ const isModalOpen = ref(false)
 const rerender = ref(0)
 const modalRef = ref()
 
-const modalSettings = reactive({
-  // In a bigger app I would probably make this object global so that I can use it in other components without having to redefine it every time
-  title: 'Add New User',
-  content: 'This is the content of the modal',
-  leftBtn: {
-    text: 'Cancel',
-    action: () => {
-      console.log('Close :>> ')
-    }
-  },
-  rightBtn: {
-    text: 'Save',
-    action: () => {
-      // addUser()
-      console.log('Save :>> ')
-    }
-  }
-})
 // ---------------------- REACTIVE END --------------------------
 // -------------------- COMPUTED START-----------------------
 const isValidEmail = computed(() => {
@@ -59,7 +41,6 @@ const isPasswordMatch = computed(() => {
   return userInfo.password === userInfo.passwordConfirmation
 })
 const isPassworGoodEnough = computed(() => {
-  // const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
   const passwordPattern = /^.{6,}$/
   return passwordPattern.test(userInfo.password)
 })
@@ -68,8 +49,6 @@ const isPassworGoodEnough = computed(() => {
 // -------------------- FUNCTIONS START ---------------------
 
 function addUser() {
-  // userInfo.id = usersStore.users.length + 1
-  // const userNew = { id: userInfo.id, username: userInfo.username, email: userInfo.email, password: userInfo.password }
   addUserToStoreCOMP({ ...userInfo })
   resetUserInfo()
   isModalOpen.value = false
@@ -173,7 +152,6 @@ function deleteUser(id: number) {
         </tbody>
       </table>
     </div>
-    <!-- <pre class="mt-4">{{ usedById }}</pre> -->
     <!-- -------------- Modal START -------------- -->
     <div>
       <div
@@ -237,8 +215,6 @@ function deleteUser(id: number) {
                 class="mt-1 text-sm text-red-500"
               >
                 Password must be at least 6 characters long.
-                <!-- Must contain at least one uppercase letter, one
-                lowercase letter, one number and one special character. -->
               </p>
             </div>
             <div>
