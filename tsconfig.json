@@ -1,4 +1,23 @@
+// {
+//   "compilerOptions": {
+//     "sourceMap": true,
+//     "strict": true,
+//     "paths": {
+//       "~/*": ["./*"],
+//       "@/*": ["./*"]
+//     }
+//   },
+//   "include": [
+//     "src/**/*.ts",
+//     "src/**/*.vue",
+//     "src/store/**/*.ts",
+//     "src/pages/**/*.ts"
+//   ],
+//   "exclude": ["node_modules", ".nuxt", "dist"]
+// }
+
 {
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "sourceMap": true,
     "strict": true,
@@ -6,6 +25,5 @@
       "~/*": ["./*"],
       "@/*": ["./*"]
     }
-  },
-  "exclude": ["node_modules", ".nuxt", "dist", "./.playground/.nuxt/tsconfig.json"]
+  }
 }
