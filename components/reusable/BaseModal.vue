@@ -41,20 +41,22 @@
 
         <!-- Modal footer slot -->
         <div class="modal-footer flex justify-end mt-4">
-          <slot name="footer">
-            <!-- Fallback buttons if no footer slot is provided -->
-            <button
-              @click="modalSettings.leftBtn.action"
-              class="text-gray-400 hover:text-gray-600"
-            >
-              {{ modalSettings.leftBtn.text }}
-            </button>
-            <button
-              @click="modalSettings.rightBtn.action"
-              class="text-blue-500 hover:text-blue-700 ml-4"
-            >
-              {{ modalSettings.rightBtn.text }}
-            </button>
+          <slot name="footer ">
+            <div class="mt-6">
+              <!-- Fallback buttons if no footer slot is provided -->
+              <button
+                @click="modalSettings.leftBtn.action"
+                class="text-gray-400 hover:text-gray-600"
+              >
+                {{ modalSettings.leftBtn.text }}
+              </button>
+              <button
+                @click="modalSettings.rightBtn.action"
+                class="text-blue-500 hover:text-blue-700 ml-4"
+              >
+                {{ modalSettings.rightBtn.text }}
+              </button>
+            </div>
           </slot>
         </div>
       </div>
@@ -70,7 +72,3 @@ const baseModal = useBaseModalStore()
 const { modalSettings, isModalOpen } = storeToRefs(baseModal)
 const { closeModal } = baseModal
 </script>
-
-<style>
-/* Your styles here */
-</style>

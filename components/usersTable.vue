@@ -86,6 +86,7 @@
         <button
           @click="baseModalStore.rightBtnAction"
           class="text-blue-500 hover:text-blue-700 ml-4"
+          :class="{ disabled: !isFormValid }"
           :disabled="!isFormValid"
         >
           Save
@@ -341,5 +342,9 @@ function resetUserInfo() {
 
 .overflow-auto::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 </style>
