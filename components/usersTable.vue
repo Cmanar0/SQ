@@ -26,6 +26,7 @@ const rerender = ref(0)
 const modalRef = ref()
 
 const modalSettings = reactive({
+  // In a bigger app I would probably make this object global so that I can use it in other components without having to redefine it every time
   title: 'Add New User',
   content: 'This is the content of the modal',
   leftBtn: {
@@ -80,20 +81,32 @@ function editUser(id: number) {
   console.log('users :>> ', users)
 }
 function deleteUser(id: number) {
-  deleteUserFromStoreCOMP(id)
+  const params = {
+    title: 'Delete User',
+    content: 'Are you sure you want to delete this user?',
+    leftBtn: { text: 'Cancel', action: () => {} },
+    rightBtn: { text: 'Delete', action: () => deleteUserFromStoreCOMP(id) }
+  }
+  setModal(params)
 }
 // ! -------- Modal Start --------
-function setModal() {
-  modalSettings.title = 'Add New User'
-  modalSettings.content = 'This is the content of the modal'
-  modalSettings.leftBtn.text = 'Cancel'
+function setModal(params: {
+  title: string
+  content: string
+  leftBtn: { text: string; action: () => void }
+  rightBtn: { text: string; action: () => void }
+}) {
+  modalSettings.title = params.title
+  modalSettings.content = params.content
+  modalSettings.leftBtn.text = params.leftBtn.text
   modalSettings.leftBtn.action = () => {
+    params.leftBtn.action()
     modalRef.value.toggleVisibility()
   }
-  modalSettings.rightBtn.text = 'Save'
+  modalSettings.rightBtn.text = params.rightBtn.text
   modalSettings.rightBtn.action = () => {
-    // addUser()
-    console.log('Save')
+    params.rightBtn.action()
+    modalRef.value.toggleVisibility()
   }
   openModal()
 }
@@ -105,12 +118,9 @@ function openModal() {
 </script>
 <template>
   <div>
+    <BaseModal ref="modalRef"></BaseModal>
     <div class="main-header">
       <h1>List of users</h1>
-      <div>
-        <button @click="setModal">Toggle Modal</button>
-        <BaseModal ref="modalRef"></BaseModal>
-      </div>
       <button
         @click="isModalOpen = true"
         class="btn-content mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -118,7 +128,7 @@ function openModal() {
         <user-plus class="icon" /> Add User
       </button>
     </div>
-    <div></div>
+
     <div class="overflow-auto">
       <table :key="rerender" class="min-w-full table-auto">
         <thead class="bg-gray-200">
