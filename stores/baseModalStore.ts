@@ -47,6 +47,16 @@ export const useBaseModalStore = defineStore({
     },
     closeModal() {
       this.isModalOpen = false
+    },
+    leftBtnAction() {
+      if (typeof this.modalSettings.leftBtn.action === 'function') {
+        ;(this.modalSettings.leftBtn.action as Function)()
+      }
+    },
+    rightBtnAction() {
+      if (typeof this.modalSettings.rightBtn.action === 'function') {
+        ;(this.modalSettings.rightBtn.action as Function)()
+      }
     }
   },
   getters: {

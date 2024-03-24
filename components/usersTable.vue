@@ -1,125 +1,6 @@
-<script lang="ts" async setup>
-import { computed, ref, reactive } from 'vue'
-// ---------------------- Composables ----------------------
-import { usersComposable } from '../composables/manageUsers/usersComposable'
-const {
-  users,
-  addUserToStoreCOMP,
-  editUserInStoreCOMP,
-  deleteUserFromStoreCOMP
-} = usersComposable()
-// ---------------------- Stores ----------------------
-import { useBaseModalStore } from '@/stores/baseModalStore'
-const baseModalStore = useBaseModalStore()
-
-import { manageUsers } from '../stores/store'
-const usersStore = manageUsers()
-// ---------------------- Components ----------------------
-import userPlus from '../assets/svg/user-plus.vue'
-import userMinus from '../assets/svg/user-minus.vue'
-import edit from '../assets/svg/edit.vue'
-import close from '../assets/svg/close.vue'
-import BaseModal from './reusable/BaseModal.vue'
-
-// ---------------------- REACTIVE START ------------------------
-const userInfo = reactive({
-  id: Math.floor(Math.random() * 901) + 100,
-  username: '',
-  email: '',
-  password: '',
-  passwordConfirmation: ''
-})
-const isModalOpen = ref(false)
-const hasModalCustomTemplate = ref(false)
-
-// ---------------------- REACTIVE END --------------------------
-// -------------------- COMPUTED START-----------------------
-const isValidEmail = computed(() => {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailPattern.test(userInfo.email)
-})
-const isPasswordMatch = computed(() => {
-  return userInfo.password === userInfo.passwordConfirmation
-})
-const isPassworGoodEnough = computed(() => {
-  const passwordPattern = /^.{6,}$/
-  return passwordPattern.test(userInfo.password)
-})
-// -------------------- COMPUTED END-------------------------
-// -------------------- FUNCTIONS START ---------------------
-function addUserModalForm() {
-  hasModalCustomTemplate.value = true
-  baseModalStore.setModalSettings({
-    title: 'Add User',
-    content: '',
-    leftBtnText: 'Cancel',
-    leftBtnAction: () => {
-      baseModalStore.closeModal()
-    },
-    rightBtnText: 'Save',
-    rightBtnAction: () => {
-      addUser()
-      baseModalStore.closeModal()
-    }
-  })
-  baseModalStore.openModal()
-}
-function addUser() {
-  addUserToStoreCOMP({ ...userInfo })
-  resetUserInfo()
-}
-function editUser(id: number) {
-  editUserInStoreCOMP(id, { ...userInfo })
-  resetUserInfo()
-}
-function resetUserInfo() {
-  userInfo.id = Math.floor(Math.random() * 901) + 100
-  userInfo.username = ''
-  userInfo.email = ''
-  userInfo.password = ''
-  userInfo.passwordConfirmation = ''
-}
-function editUserModalForm(id: number) {
-  const user = usersStore.getUserById(id)
-  Object.assign(userInfo, user)
-  userInfo.passwordConfirmation = userInfo.password
-  hasModalCustomTemplate.value = true
-  baseModalStore.setModalSettings({
-    title: 'Edit User',
-    content: 'Are you sure you want to edit this user?',
-    leftBtnText: 'Cancel',
-    leftBtnAction: () => {
-      baseModalStore.closeModal()
-    },
-    rightBtnText: 'Save',
-    rightBtnAction: () => {
-      editUser(id)
-      baseModalStore.closeModal()
-    }
-  })
-  baseModalStore.openModal()
-}
-function deleteUser(id: number) {
-  hasModalCustomTemplate.value = false
-  baseModalStore.setModalSettings({
-    title: 'Delete User',
-    content: 'Are you sure you want to delete this user?',
-    leftBtnText: 'Cancel',
-    leftBtnAction: () => {
-      baseModalStore.closeModal()
-    },
-    rightBtnText: 'Confirm',
-    rightBtnAction: () => {
-      deleteUserFromStoreCOMP(id)
-      baseModalStore.closeModal()
-    }
-  })
-  baseModalStore.openModal()
-}
-// -------------------- FUNCTIONS END ---------------------
-</script>
 <template>
   <div>
+    {{ userInfo }}
     <BaseModal v-if="!hasModalCustomTemplate" />
     <BaseModal v-else>
       <template #header>
@@ -196,7 +77,21 @@ function deleteUser(id: number) {
         </div>
       </template>
 
-      <template #footer></template>
+      <template #footer>
+        <button
+          @click="baseModalStore.leftBtnAction"
+          class="text-gray-400 hover:text-gray-600"
+        >
+          Cancel
+        </button>
+        <button
+          @click="baseModalStore.rightBtnAction"
+          class="text-blue-500 hover:text-blue-700 ml-4"
+          :disabled="!isFormValid"
+        >
+          Save
+        </button>
+      </template>
     </BaseModal>
     <div class="main-header">
       <h1>List of users</h1>
@@ -269,6 +164,135 @@ function deleteUser(id: number) {
     </div>
   </div>
 </template>
+
+<script lang="ts" async setup>
+import { computed, ref, reactive } from 'vue'
+// ---------------------- Composables ----------------------
+import { usersComposable } from '../composables/manageUsers/usersComposable'
+const {
+  users,
+  addUserToStoreCOMP,
+  editUserInStoreCOMP,
+  deleteUserFromStoreCOMP
+} = usersComposable()
+// ---------------------- Stores ----------------------
+import { useBaseModalStore } from '@/stores/baseModalStore'
+const baseModalStore = useBaseModalStore()
+
+import { manageUsers } from '../stores/store'
+const usersStore = manageUsers()
+// ---------------------- Components ----------------------
+import userPlus from '../assets/svg/user-plus.vue'
+import userMinus from '../assets/svg/user-minus.vue'
+import edit from '../assets/svg/edit.vue'
+import close from '../assets/svg/close.vue'
+import BaseModal from './reusable/BaseModal.vue'
+
+// ---------------------- REACTIVE START ------------------------
+const userInfo = reactive({
+  id: Math.floor(Math.random() * 901) + 100,
+  username: '',
+  email: '',
+  password: '',
+  passwordConfirmation: ''
+})
+const isModalOpen = ref(false)
+const hasModalCustomTemplate = ref(false)
+
+// ---------------------- REACTIVE END --------------------------
+// -------------------- COMPUTED START-----------------------
+const isValidEmail = computed(() => {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailPattern.test(userInfo.email)
+})
+const isPasswordMatch = computed(() => {
+  return userInfo.password === userInfo.passwordConfirmation
+})
+const isPassworGoodEnough = computed(() => {
+  const passwordPattern = /^.{6,}$/
+  return passwordPattern.test(userInfo.password)
+})
+const isFormValid = computed(() => {
+  return (
+    isValidEmail.value && isPasswordMatch.value && isPassworGoodEnough.value
+  )
+})
+
+// -------------------- COMPUTED END-------------------------
+// -------------------- FUNCTIONS START ---------------------
+function addUserModalForm() {
+  hasModalCustomTemplate.value = true
+  baseModalStore.setModalSettings({
+    title: 'Add User',
+    content: '',
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Save',
+    rightBtnAction: () => {
+      addUser()
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
+}
+function editUserModalForm(id: number) {
+  const user = usersStore.getUserById(id)
+  Object.assign(userInfo, user)
+  userInfo.passwordConfirmation = userInfo.password
+  hasModalCustomTemplate.value = true
+  baseModalStore.setModalSettings({
+    title: 'Edit User',
+    content: 'Are you sure you want to edit this user?',
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      resetUserInfo()
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Save',
+    rightBtnAction: () => {
+      editUser(id)
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
+}
+function deleteUser(id: number) {
+  hasModalCustomTemplate.value = false
+  baseModalStore.setModalSettings({
+    title: 'Delete User',
+    content: 'Are you sure you want to delete this user?',
+    leftBtnText: 'Cancel',
+    leftBtnAction: () => {
+      baseModalStore.closeModal()
+    },
+    rightBtnText: 'Confirm',
+    rightBtnAction: () => {
+      deleteUserFromStoreCOMP(id)
+      baseModalStore.closeModal()
+    }
+  })
+  baseModalStore.openModal()
+}
+function addUser() {
+  addUserToStoreCOMP({ ...userInfo })
+  resetUserInfo()
+}
+function editUser(id: number) {
+  editUserInStoreCOMP(id, { ...userInfo })
+  resetUserInfo()
+}
+function resetUserInfo() {
+  userInfo.id = Math.floor(Math.random() * 901) + 100
+  userInfo.username = ''
+  userInfo.email = ''
+  userInfo.password = ''
+  userInfo.passwordConfirmation = ''
+}
+
+// -------------------- FUNCTIONS END ---------------------
+</script>
 
 <style scoped>
 .main-header {
