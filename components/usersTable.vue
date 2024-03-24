@@ -5,9 +5,6 @@
       <template #header>
         <h2>{{ baseModalStore.getModalSettings.title }}</h2>
       </template>
-      <template #text>
-        <p>{{ baseModalStore.getModalSettings.content }}</p>
-      </template>
       <template #default>
         <div class="modal-body flex flex-col gap-4">
           <input

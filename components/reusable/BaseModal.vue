@@ -17,12 +17,7 @@
               <!-- Fallback content -->
               <h2 class="text-xl font-semibold">{{ modalSettings.title }}</h2>
             </slot>
-            <div class="mt-5">
-              <slot name="text">
-                <!-- Fallback content -->
-                <p class="text-gray-500">{{ modalSettings.content }}</p>
-              </slot>
-            </div>
+            <div class="mt-5"></div>
           </div>
           <!-- Fallback content -->
           <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
@@ -75,7 +70,11 @@ const { modalSettings, isModalOpen } = storeToRefs(baseModal)
 const { closeModal } = baseModal
 
 const props = defineProps({
-  isFormValid: Boolean
+  isFormValid: {
+    type: Boolean,
+    required: false,
+    default: true
+  }
 })
 </script>
 
