@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ userInfo }}
     <BaseModal v-if="!hasModalCustomTemplate" />
     <BaseModal v-else>
       <template #header>
@@ -196,9 +195,7 @@ const userInfo = reactive({
   password: '',
   passwordConfirmation: ''
 })
-const isModalOpen = ref(false)
 const hasModalCustomTemplate = ref(false)
-
 // ---------------------- REACTIVE END --------------------------
 // -------------------- COMPUTED START-----------------------
 const isValidEmail = computed(() => {
@@ -217,7 +214,6 @@ const isFormValid = computed(() => {
     isValidEmail.value && isPasswordMatch.value && isPassworGoodEnough.value
   )
 })
-
 // -------------------- COMPUTED END-------------------------
 // -------------------- FUNCTIONS START ---------------------
 function addUserModalForm() {
@@ -290,7 +286,6 @@ function resetUserInfo() {
   userInfo.password = ''
   userInfo.passwordConfirmation = ''
 }
-
 // -------------------- FUNCTIONS END ---------------------
 </script>
 
