@@ -38,10 +38,9 @@
             {{ modalSettings.content }}
           </slot>
         </div>
-
         <!-- Modal footer slot -->
         <div class="modal-footer flex justify-end mt-4">
-          <slot name="footer ">
+          <slot name="footer">
             <div class="mt-6">
               <!-- Fallback buttons if no footer slot is provided -->
               <button
@@ -51,6 +50,8 @@
                 {{ modalSettings.leftBtn.text }}
               </button>
               <button
+                :class="{ disabled: !props.isFormValid }"
+                :disabled="!props.isFormValid"
                 @click="modalSettings.rightBtn.action"
                 class="text-blue-500 hover:text-blue-700 ml-4"
               >
@@ -67,8 +68,20 @@
 <script setup lang="ts">
 import CloseIcon from '../../assets/svg/close.vue'
 import { useBaseModalStore } from '@/stores/baseModalStore'
+import { defineProps } from 'vue'
 
 const baseModal = useBaseModalStore()
 const { modalSettings, isModalOpen } = storeToRefs(baseModal)
 const { closeModal } = baseModal
+
+const props = defineProps({
+  isFormValid: Boolean
+})
 </script>
+
+<style>
+.disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
+}
+</style>

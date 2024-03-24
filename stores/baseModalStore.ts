@@ -6,6 +6,7 @@ export const useBaseModalStore = defineStore({
   state: () => ({
     // Initial state
     modalSettings: {
+      action: '',
       title: 'Add New User',
       content: 'This is the content of the modal',
       leftBtn: {
@@ -21,6 +22,7 @@ export const useBaseModalStore = defineStore({
   }),
   actions: {
     setModalSettings({
+      action,
       title,
       content,
       leftBtnText,
@@ -28,6 +30,7 @@ export const useBaseModalStore = defineStore({
       rightBtnText,
       rightBtnAction
     }: {
+      action?: string
       title?: string
       content?: string
       leftBtnText: string
@@ -35,6 +38,7 @@ export const useBaseModalStore = defineStore({
       rightBtnText: string
       rightBtnAction: any
     }) {
+      this.modalSettings.action = action ?? this.modalSettings.action
       this.modalSettings.title = title ?? this.modalSettings.title
       this.modalSettings.content = content ?? this.modalSettings.content
       this.modalSettings.leftBtn.text = leftBtnText

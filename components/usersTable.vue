@@ -1,7 +1,7 @@
 <template>
   <div>
     <BaseModal v-if="!hasModalCustomTemplate" />
-    <BaseModal v-else>
+    <BaseModal :isFormValid="isFormValid" v-else>
       <template #header>
         <h2>{{ baseModalStore.getModalSettings.title }}</h2>
       </template>
@@ -220,6 +220,7 @@ const isFormValid = computed(() => {
 function addUserModalForm() {
   hasModalCustomTemplate.value = true
   baseModalStore.setModalSettings({
+    action: 'adduser',
     title: 'Add User',
     content: '',
     leftBtnText: 'Cancel',
@@ -240,6 +241,7 @@ function editUserModalForm(id: number) {
   userInfo.passwordConfirmation = userInfo.password
   hasModalCustomTemplate.value = true
   baseModalStore.setModalSettings({
+    action: 'edit',
     title: 'Edit User',
     content: 'Are you sure you want to edit this user?',
     leftBtnText: 'Cancel',
@@ -344,7 +346,7 @@ function resetUserInfo() {
   background: #555;
 }
 .disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+  cursor: not-allowed !important;
+  opacity: 0.5 !important;
 }
 </style>
